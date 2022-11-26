@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "264751870588",
+    "project_id": "jaca-88710",
+    "storage_bucket": "jaca-88710.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:264751870588:android:04135d8354d30b824bcff9",
+        "android_client_info": {
+          "package_name": "com.sidmya.jaca"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "264751870588-cbp5mq78dbe8vh316qp8ni1s9ii8g4e3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB9c_HnR_w8SUlGrI6kPj26qck-0oKJB8I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "264751870588-cbp5mq78dbe8vh316qp8ni1s9ii8g4e3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
