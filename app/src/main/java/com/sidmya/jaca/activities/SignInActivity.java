@@ -45,20 +45,18 @@ public class SignInActivity extends AppCompatActivity {
 
     private void signIn(){
         loading(true);
-        //showToast("1");
         FirebaseFirestore database = FirebaseFirestore.getInstance();
-        //showToast("2");
         database.collection(Constants.KEY_COLLECTION_USERS)
-                .whereEqualTo(Constants.KEY_USERNAME,binding.inputUsername.getText().toString())
+                .whereEqualTo(Constants.KEY_USERNAME,binding.inputUsername.getText().toString().trim())
                 .whereEqualTo(Constants.KEY_PASSWORD,binding.inputPassword.getText().toString())
                 .get()
                 .addOnCompleteListener(task -> {
-                    //showToast("4");
                     if(task.isSuccessful() && task.getResult() != null && task.getResult().getDocuments().size() > 0){
                         DocumentSnapshot documentSnapshot = task.getResult().getDocuments().get(0);
                         preferenceManager.putBoolean(Constants.KEY_IS_SIGNED_IN, true);
                         preferenceManager.putString(Constants.KEY_USER_ID, documentSnapshot.getId());
                         preferenceManager.putString(Constants.KEY_NAME, documentSnapshot.getString(Constants.KEY_NAME));
+                        preferenceManager.putString(Constants.KEY_USERNAME, documentSnapshot.getString(Constants.KEY_USERNAME));
                         preferenceManager.putString(Constants.KEY_IMAGE, documentSnapshot.getString(Constants.KEY_IMAGE));
                         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

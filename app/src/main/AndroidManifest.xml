@@ -11,6 +11,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Jaca">
+        <activity android:name=".activities.AboutMeActivity"></activity>
         <activity
             android:name=".activities.ChatActivity"
             android:windowSoftInputMode="adjustResize" />

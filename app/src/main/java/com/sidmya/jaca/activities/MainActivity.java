@@ -35,6 +35,7 @@ public class MainActivity extends BaseActivity implements ConversionListener {
     private List<ChatMessage> conversations;
     private RecentConversationsAdapter conversationsAdapter;
     private FirebaseFirestore database;
+    //private String temp = "Name";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,10 +61,11 @@ public class MainActivity extends BaseActivity implements ConversionListener {
         binding.imageSignOut.setOnClickListener(v -> signOut());
         binding.fabNewChat.setOnClickListener(v->
                 startActivity(new Intent(getApplicationContext(),UsersActivity.class)));
+        binding.imageProfile.setOnClickListener(v->
+                startActivity(new Intent(getApplicationContext(),AboutMeActivity.class)));
     }
 
     private void loadUserDetails(){
-            binding.textName.setText(preferenceManager.getString(Constants.KEY_NAME));
             byte[] bytes = Base64.decode(preferenceManager.getString(Constants.KEY_IMAGE), Base64.DEFAULT);
             Bitmap bitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
             binding.imageProfile.setImageBitmap(bitmap);
@@ -88,7 +90,6 @@ public class MainActivity extends BaseActivity implements ConversionListener {
             return;
         }
         if (value != null){
-            //int count = chatMessages.size();
             for(DocumentChange documentChange : value.getDocumentChanges()){
                 if(documentChange.getType() == DocumentChange.Type.ADDED){
                     String senderId = documentChange.getDocument().getString(Constants.KEY_SENDER_ID);

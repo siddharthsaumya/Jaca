@@ -2,6 +2,7 @@ package com.sidmya.jaca.adapters;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.text.Html;
 import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import com.sidmya.jaca.databinding.ItemContainerRecentConversionBinding;
 import com.sidmya.jaca.listeners.ConversionListener;
 import com.sidmya.jaca.models.ChatMessage;
 import com.sidmya.jaca.models.User;
+import com.sidmya.jaca.utilities.PreferenceManager;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -21,6 +23,7 @@ public class RecentConversationsAdapter extends RecyclerView.Adapter<RecentConve
 
     private final List<ChatMessage> chatMessages;
     private final ConversionListener conversionListener;
+    private PreferenceManager preferenceManager;;
 
     public RecentConversationsAdapter(List<ChatMessage> chatMessages, ConversionListener conversionListener) {
         this.chatMessages = chatMessages;
@@ -59,7 +62,8 @@ public class RecentConversationsAdapter extends RecyclerView.Adapter<RecentConve
 
         void setData(ChatMessage chatMessage){
             binding.imageProfile.setImageBitmap(getConversionImage(chatMessage.conversionImage));
-            binding.textName.setText(chatMessage.conversionName);
+            String sourceString = "<b>" + chatMessage.conversionName + "</b> ";
+            binding.textName.setText(Html.fromHtml(sourceString));
             binding.textRecentMessage.setText(chatMessage.message);
             binding.getRoot().setOnClickListener(v->{
                 User user = new User();

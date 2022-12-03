@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -30,6 +31,8 @@ public class SignUpActivity extends AppCompatActivity {
     private String encodedImage;
     private ActivitySignUpBinding binding;
     private PreferenceManager preferenceManager;
+    //public Boolean exists = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,34 +63,28 @@ public class SignUpActivity extends AppCompatActivity {
 
     private void signUp(){
         loading(true);
-        //showToast("1");
         FirebaseFirestore database = FirebaseFirestore.getInstance();
         HashMap<String, Object> user = new HashMap<>();
-        //showToast("2");
         user.put(Constants.KEY_NAME,binding.inputName.getText().toString());
         user.put(Constants.KEY_USERNAME,binding.inputUsername.getText().toString());
         user.put(Constants.KEY_PASSWORD,binding.inputPassword.getText().toString());
         user.put(Constants.KEY_IMAGE,encodedImage);
-        //showToast("3");
         database.collection(Constants.KEY_COLLECTION_USERS)
                 .add(user)
                 .addOnSuccessListener(documentReference -> {
-                    //showToast("4");
                     loading(false);
                     preferenceManager.putBoolean(Constants.KEY_IS_SIGNED_IN, true);
                     preferenceManager.putString(Constants.KEY_USER_ID, documentReference.getId());
+                    preferenceManager.putString(Constants.KEY_USERNAME, binding.inputUsername.getText().toString().trim());
                     preferenceManager.putString(Constants.KEY_NAME, binding.inputName.getText().toString());
                     preferenceManager.putString(Constants.KEY_IMAGE, encodedImage);
                     Intent intent = new Intent(getApplicationContext(),MainActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    //showToast("5");
                     startActivity(intent);
                 })
                 .addOnFailureListener(exception->{
-                    //showToast("6");
                     loading(false);
-                    showToast(exception.getMessage());
-                    //showToast("7");
+                    Log.e("ERROR","Error signing up because of: "+exception.getMessage());
                 });
     }
 
@@ -121,13 +118,35 @@ public class SignUpActivity extends AppCompatActivity {
                 }
             }
     );
+//
+//    private void ifUsernameExists(String username){
+//        FirebaseFirestore database = FirebaseFirestore.getInstance();
+//        database.collectionGroup(Constants.KEY_COLLECTION_USERS).whereEqualTo(Constants.KEY_USERNAME, username).get()
+//                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+//                    @Override
+//                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+//                        for (QueryDocumentSnapshot snap : queryDocumentSnapshots) {
+//                            if(snap.getString(Constants.KEY_USERNAME).equals(username)){
+//                               try{
+//                                   exists = true;
+//                                   //return true;
+//                               }catch (Exception e) {
+//                                    Log.e("CHANGINGERROR", String.valueOf(e));
+//                               }
+//                            }
+//                        }
+//                    }
+//                });
+//        //return false;
+//    }
 
 
     private Boolean isValidSignUpDetails(){
+        //ifUsernameExists(binding.inputUsername.getText().toString().trim());
         if(encodedImage == null){
-            showToast("Select profile image");
-            return false;
-        }else if(binding.inputName.getText().toString().trim().isEmpty()){
+            encodedImage = "/9j/4AAQSkZJRgABAQAAAQABAAD/4gIoSUNDX1BST0ZJTEUAAQEAAAIYAAAAAAIQAABtbnRyUkdCIFhZWiAAAAAAAAAAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAAHRyWFlaAAABZAAAABRnWFlaAAABeAAAABRiWFlaAAABjAAAABRyVFJDAAABoAAAAChnVFJDAAABoAAAAChiVFJDAAABoAAAACh3dHB0AAAByAAAABRjcHJ0AAAB3AAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAFgAAAAcAHMAUgBHAEIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFhZWiAAAAAAAABvogAAOPUAAAOQWFlaIAAAAAAAAGKZAAC3hQAAGNpYWVogAAAAAAAAJKAAAA+EAAC2z3BhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABYWVogAAAAAAAA9tYAAQAAAADTLW1sdWMAAAAAAAAAAQAAAAxlblVTAAAAIAAAABwARwBvAG8AZwBsAGUAIABJAG4AYwAuACAAMgAwADEANv/bAEMAEAsMDgwKEA4NDhIREBMYKBoYFhYYMSMlHSg6Mz08OTM4N0BIXE5ARFdFNzhQbVFXX2JnaGc+TXF5cGR4XGVnY//bAEMBERISGBUYLxoaL2NCOEJjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY//AABEIAJYAlgMBIgACEQEDEQH/xAAaAAEAAwEBAQAAAAAAAAAAAAAAAQIEBQMG/8QALRABAAIBAwMDAgQHAAAAAAAAAAECAwQRIRIxQTJRcRMiFGFisTNCcoGRodH/xAAUAQEAAAAAAAAAAAAAAAAAAAAA/8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAwDAQACEQMRAD8A+wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAeWXUY8W8TO9vaHlqtT0746erzPswg1TrckzxWsR+fKv4zLv/AC/4eADVTXW3++kTH6WrHlpk9Fonbu5aa2mlotWdpgHWHjp88ZqzxtaO8PYAAAAAAAAAAB558kYsU289o+Xoya+3FK+OZBj79wAAAAAWxXnHkraPHf4dSJi0RMTvE8xLkujpbdWnrv44B7AAAAAAiJ3S81ot7gsAAxa+PvpPvDaza6nVii0Rv0zz8AwgAAAAAh0dFG2nifeZc91MNejFSsxtMRz8guAACs29gTNthQAAAidlotHlUB6ExvG08w8+yeqQc/PinFeY56fE+7ydS8UyVmt44/Zz8uOtOa5K3j8p5BQQAlBu0YMNLWj6mSv9MTzILaPB1W+paPtjt+ctysTFY2iNojwibSC6s29lQCZ3AAAAAABW9646za08Am1orWZtO0R5Zsur8Y4/vLwzZrZbc8R4h5gm9739VpnzyqkAAAQkBembJT02nb2nmGrFqq24v9s/6YkA6ww6fUTTat+a/s3d43gAAAAAACZ2jee0Odnyzlv+mOzTrMk1pFI727/DECEgAAAAAAAACGrSZtp+naeJ7f8AGYB1RTDk+pii09/K4AAAAOdqbdWe3PEcPMmZmd57zzIAAAAAAAAAAAADTobz1Wp423bHP0szGort53iXQAAARb0z8ADlgAAAAAAAAAAAAA9NN/Hp8uiAAAP/2Q==";
+        }
+        if(binding.inputName.getText().toString().trim().isEmpty()){
             showToast("Enter name");
             return false;
         }else if(binding.inputUsername.getText().toString().trim().isEmpty()){

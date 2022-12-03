@@ -14,4 +14,9 @@
     <string name="username">Username</string>
     <string name="type_a_message">Type a message</string>
     <string name="online">Online</string>
+    <string name="about_me">About Me</string>
+    <string name="save">Save</string>
+    <string name="new_name">New name</string>
+    <string name="new_username">New username</string>
+    <string name="tap_to_chat">Tap to chat</string>
 </resources>

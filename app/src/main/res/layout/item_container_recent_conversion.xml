@@ -48,6 +48,7 @@
         android:layout_marginEnd="@dimen/_8sdp"
         android:ellipsize="end"
         android:maxLines="1"
+        android:text="@string/tap_to_chat"
         android:textColor="@color/secondary_text"
         android:textSize="@dimen/_12ssp"
         app:layout_constraintTop_toBottomOf="@id/viewSupporter"
