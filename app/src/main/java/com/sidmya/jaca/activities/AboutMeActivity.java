@@ -1,5 +1,8 @@
 package com.sidmya.jaca.activities;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -13,11 +16,17 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.sidmya.jaca.databinding.ActivityAboutMeBinding;
 import com.sidmya.jaca.utilities.Constants;
 import com.sidmya.jaca.utilities.PreferenceManager;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
@@ -49,6 +58,16 @@ public class AboutMeActivity extends BaseActivity{
         }
     }
 
+    private void lastLoading(Boolean isLoading){
+        if(isLoading){
+            binding.buttonDelete.setVisibility(View.INVISIBLE);
+            binding.progressBar2.setVisibility(View.VISIBLE);
+        }else{
+            binding.buttonDelete.setVisibility(View.VISIBLE);
+            binding.progressBar2.setVisibility(View.INVISIBLE);
+        }
+    }
+
     private void setDefaultValues(){
         binding.inputName.setText(preferenceManager.getString(Constants.KEY_NAME));
         binding.inputUsername.setText(preferenceManager.getString(Constants.KEY_USERNAME));
@@ -65,6 +84,12 @@ public class AboutMeActivity extends BaseActivity{
             Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             pickImage.launch(intent);
+        });
+        binding.buttonDelete.setOnClickListener(v->{
+            deleteUserAccount();
+            Intent intent = new Intent(getApplicationContext(), SignUpActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
         });
     }
 
@@ -146,6 +171,33 @@ public class AboutMeActivity extends BaseActivity{
                         showToast("Unable to sign in");
                     }
                 });
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+    }
+
+    private void deleteUserAccount(){
+        lastLoading(true);
+        FirebaseFirestore database = FirebaseFirestore.getInstance();
+        database
+                .collection(Constants.KEY_COLLECTION_USERS)
+                .document(preferenceManager.getString(Constants.KEY_USER_ID))
+                .delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        lastLoading(false);
+                        Log.d("DELETE","Deleted account successfully");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull @NotNull Exception e) {
+                        lastLoading(false);
+                        Log.e("DELETE","Deleting account unsuccessful");
+                    }
+                });
+        preferenceManager.clear();
     }
 
 }

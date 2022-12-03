@@ -19,4 +19,5 @@
     <string name="new_name">New name</string>
     <string name="new_username">New username</string>
     <string name="tap_to_chat">Tap to chat</string>
+    <string name="delete_account">Delete Account</string>
 </resources>

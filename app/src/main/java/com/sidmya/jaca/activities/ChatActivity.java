@@ -1,5 +1,10 @@
 package com.sidmya.jaca.activities;
 
+import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -276,14 +281,10 @@ public class ChatActivity extends BaseActivity {
     }
 
     private void deleteChats(){
-        try{
             deleteSenderChat();
             deleteReceiverChat();
             deleteConversation();
-            showToast("Chats deleted successfully");
-        }catch (Exception e){
-            showToast("Error deleting chats");
-        }
+            showToast("Chat deleted successfully");
     }
 
     private void deleteConversation(){
@@ -294,14 +295,12 @@ public class ChatActivity extends BaseActivity {
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void unused) {
-                            showToast("YES");
                             Log.d("DELETE","Deleted conversation successfully");
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull @NotNull Exception e) {
-                            showToast("NO");
                             Log.e("DELETE","Deleting conversation unsuccessful");
                         }
                     });
