@@ -281,10 +281,18 @@ public class ChatActivity extends BaseActivity {
     }
 
     private void deleteChats(){
+        try {
             deleteSenderChat();
             deleteReceiverChat();
-            deleteConversation();
-            showToast("Chat deleted successfully");
+            try{
+                deleteConversation();
+                showToast("Chat deleted successfully");
+            }catch (Exception ex){
+                Log.i("TAG","Error deleting conversations: "+ex);
+            }
+        }catch (Exception e){
+            Log.i("TAG","Error deleting chats: "+e);
+        }
     }
 
     private void deleteConversation(){
